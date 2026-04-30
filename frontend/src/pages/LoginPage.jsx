@@ -20,19 +20,18 @@ export default function LoginPage() {
         try {
             const csrf = await getCsrfToken();
 
-            const res = await loginUser(
+            const data = await loginUser(
                 { username, password },
                 csrf
             );
 
-            console.log("[LOGIN SUCCESS]", res.data);
+            console.log("[LOGIN SUCCESS]", data);
 
             console.log("[LOGIN] dispatching setUser");
             
-            dispatch(setUser({
-                username: res.data.username,
-                token: res.data.accessToken
-            }));
+            setAccessToken(data.accessToken);
+
+            dispatch(setUser(data));
             console.log("[LOGIN] dispatched setUser");
 
             console.log("[LOGIN] navigating to /");

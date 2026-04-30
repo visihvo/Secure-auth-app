@@ -28,9 +28,6 @@ function App() {
             } catch (err) {
                 console.log("[AUTH] profile FAILED");
                 console.log("[AUTH] error:", err);
-
-                dispatch(logout());
-                console.log("[AUTH] Redux logout dispatched");
             } finally {
                 console.log("[AUTH] finished auth check");
                 dispatch(authChecked());

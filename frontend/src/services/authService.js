@@ -13,12 +13,18 @@ export const registerUser = (data, csrfToken) => {
     });
 };
 
-export const loginUser = (data, csrfToken) => {
-    return API.post("/auth/login", data, {
-        headers: {
-            "CSRF-Token": csrfToken
+export const loginUser = async(data, csrfToken) => {
+    try {
+        const res = await API.post("/auth/login", data, {
+            headers: { "CSRF-Token": csrfToken }
+        });
+        return res.data;
+    } catch (err) {
+        if (err.response?.status === 400) {
+            throw new Error("Invalid credentials");
         }
-    });
+        throw err;
+    }
 };
 
 export const checkUserAvailability = (username, email) => {

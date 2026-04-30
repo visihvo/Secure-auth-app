@@ -1,4 +1,6 @@
 import axios from "axios";
+import store from "../redux/store";
+import { logout } from "../redux/authSlice";
 
 const API = axios.create({
     baseURL: "http://localhost:5000/api", // hide this?
@@ -31,14 +33,24 @@ API.interceptors.response.use(
         if (err.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
-            const res = await API.post("/auth/refresh");
+            try {
+                const res = await API.post("/auth/refresh");
 
-            setAccessToken(res.data.accessToken);
+                setAccessToken(res.data.accessToken);
 
-            originalRequest.headers.Authorization =
-                `Bearer ${res.data.accessToken}`;
+                originalRequest.headers.Authorization = 
+                    `Bearer ${res.data.accessToken}`;
 
-            return API(originalRequest);
+                return;
+
+            } catch (refreshError) {
+                console.log("[AUTH] refresh failed -> logout");
+
+                setAccessToken(null);
+                store.dispatch(logout());
+
+                return Promise.reject(refreshError);
+            }
         }
 
         return Promise.reject(err);
