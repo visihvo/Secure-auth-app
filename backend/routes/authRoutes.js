@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const db = require("../database");
 const jwt = require("jsonwebtoken");
+const { randomUUID } = require("crypto");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -37,11 +38,12 @@ router.post("/register", async (req, res) => {
 
                 // Step 2: hash password
                 const hash = await bcrypt.hash(password, 12);
+                const userID = randomUUID();
 
                 // Step 3: insert new user
                 db.run(
-                    "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
-                    [username, email, hash],
+                    "INSERT INTO users (id, username, email, password_hash) VALUES (?, ?, ?, ?)",
+                    [userID, username, email, hash],
                     function (err) {
                         if (err) {
                             console.error("SQLite insert error:", err);
