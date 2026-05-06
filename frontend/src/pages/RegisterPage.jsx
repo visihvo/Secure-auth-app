@@ -33,7 +33,10 @@ function RegisterPage() {
         const usernameExists = credentialRes.data.usernameExists;
         const emailExists = credentialRes.data.emailExists;
 
-        if (usernameExists || emailExists || passwordErrors.length > 0 || matchingPasswords) {
+        if (usernameExists || 
+            emailExists || 
+            passwordErrors.length > 0 || 
+            matchingPasswords) {
             if (usernameExists && emailExists) {
                 setNameState(usernameExists);
                 setEmailState(emailExists);
@@ -51,6 +54,7 @@ function RegisterPage() {
             if (!matchingPasswords) {
                 console.log("passwords dont match")
             }
+
             return;
         }
 
@@ -125,8 +129,8 @@ function RegisterPage() {
             <button type="submit" style={{width: "fit-content", marginTop: "2px"}}>Register</button>
             
             <p style={{marginTop: "2px"}}>
-                Already have an account? 
-                <Link to="/login">Login</Link>
+                Already have an account?{" "}
+                <Link to="/login">Click here to enter login page</Link>
             </p>
         </form>
     );

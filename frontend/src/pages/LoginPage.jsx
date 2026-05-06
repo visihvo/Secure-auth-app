@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import { loginUser, getCsrfToken } from "../services/authService";
 import { setAccessToken } from "../services/api";
@@ -65,6 +65,11 @@ export default function LoginPage() {
                 <button type="submit">Login</button>
 
                 {error && <p>{error}</p>}
+
+                <p>
+                    Don't have an account?{" "}
+                    <Link to="/register">Click here to register</Link>
+                </p>
             </form>
         </div>
     );
