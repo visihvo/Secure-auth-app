@@ -9,7 +9,8 @@ export const registerUser = (data, csrfToken) => {
     return API.post("/auth/register", data, {
         headers: {
             "CSRF-Token": csrfToken
-        }
+        },
+        withCredentials: true
     });
 };
 
