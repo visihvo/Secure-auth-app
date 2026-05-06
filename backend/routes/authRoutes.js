@@ -6,6 +6,24 @@ const db = require("../database");
 const jwt = require("jsonwebtoken");
 const { randomUUID } = require("crypto");
 
+// Move register schema to own module?
+const { z } = require("zod");
+const registerSchema = z.object({
+    username: z.string()
+        .min(3)
+        .max(40)
+        .regex(/^[a-zA-Z0-9_]+$/),
+
+    email: z.string().email(),
+
+    password: z.string()
+        .min(12)
+        .regex(/[A-Z]/)
+        .regex(/[a-z]/)
+        .regex(/[0-9]/)
+        .regex(/[^A-Za-z0-9]/)
+});
+
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // REGISTER ROUTE
@@ -13,10 +31,12 @@ router.post("/register", async (req, res) => {
     const { username, email, password } = req.body;
 
     // Validate input
-    if (!username || !email || !password) {
-        return res.status(400).json({ error: "All fields are required" });
-    }
+    const parsed = registerSchema.safeParse(req.body);
 
+    if (!parsed.success) {
+        return res.status(400).json({ error: "Invalid input" });
+    }
+    
     try {
         // Step 1: check if username or email already exists
         db.get(
