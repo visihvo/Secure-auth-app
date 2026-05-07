@@ -22,9 +22,11 @@ export default function MainPage() {
         return <Navigate to="/login" />;
     }
 
+    const username = auth.user.username;
+
     return (
         <div>
-            <p>Hello {auth.user?.username}</p>
+            <p>Hello {username}</p>
 
             <button onClick={handleLogout}>
                 Logout

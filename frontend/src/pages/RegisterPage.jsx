@@ -7,7 +7,6 @@ import EmailUsed from "../components/errors/EmailUsed";
 import NotMatchingPassword from "../components/errors/NotMatchingPassword";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { getCsrfToken } from "../services/authService";
 
 const registerSchema = Yup.object({
     username: Yup.string()
@@ -50,19 +49,12 @@ function RegisterPage() {
                 const username = values.username.trim().toLowerCase();
                 const email = values.email.trim().toLowerCase();
 
-                const csrf = await getCsrfToken();
-                console.log(csrf);
-
                 const res = await checkUserAvailability(username, email);
+                console.log(res);
 
-                if (res.data.usernameExists || res.data.emailExists) {
+                if (res.usernameExists || res.emailExists) {
                     setErrors({
-                        username: res.data.usernameExists
-                            ? "Username already in use"
-                            : undefined,
-                        email: res.data.emailExists
-                            ? "Email already in use"
-                            : undefined
+                        general : "Username or email already in use"
                     });
                     return;
                 }
@@ -72,8 +64,7 @@ function RegisterPage() {
                     username,
                     email,
                     password: values.password
-                    },
-                    csrf
+                    }
                 );
 
                 navigate("/login");

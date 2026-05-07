@@ -1,3 +1,4 @@
+/* 
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -14,3 +15,4 @@ function authenticateToken(req, res, next) {
 }
 
 module.exports = authenticateToken;
+*/

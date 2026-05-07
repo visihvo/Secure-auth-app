@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setUser, logout, authChecked } from "./redux/authSlice";
+
 import { getProfile } from "./services/authService"
 import { setAccessToken } from "./services/api";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import LoginPage from "./pages/LoginPage";
@@ -14,36 +16,35 @@ function App() {
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
 
-    console.log("[APP] render - loading =", loading);
-
     useEffect(() => {
-        console.log("[APP] useEffect triggered - checking auth...");
-        const checkAuth = async () => {
+        const bootstrapAuth = async () => {
             try {
-                const res = await getProfile();
-                console.log("[AUTH] profile SUCCESS:", res.data);
+                const refreshRes = await API.post("/auth/refresh");
+                const newToken = refreshRes.data.accessToken;
+                setAccessToken(newToken);
 
-                dispatch(setUser(res.data));
-                console.log("[AUTH] Redux setUser dispatched");
-            } catch (err) {
-                console.log("[AUTH] profile FAILED");
-                console.log("[AUTH] error:", err);
+                await API.post("/auth/refresh");
+
+                const profileRes = await getProfile();
+                
+                console.log("APP - dispatching", profileRes)
+                dispatch(setUser(profileRes.data));
+            } catch(err) {
+                console.log("[AUTH] bootstrap failed");
+
+                dispatch(logout());
             } finally {
-                console.log("[AUTH] finished auth check");
                 dispatch(authChecked());
                 setLoading(false);
             }
         };
 
-        checkAuth();
-    }, [dispatch]);
+        bootstrapAuth();
+    }, [dispatch]);    
 
     if (loading) {
-        console.log("[APP] still loading → blocking UI");
         return <p>Loading...</p>
     }
-
-    console.log("[APP] loading finished → rendering routes");
 
     return (
         <BrowserRouter>

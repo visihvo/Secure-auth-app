@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 
-import { loginUser, getCsrfToken } from "../services/authService";
-import { setAccessToken } from "../services/api";
+import { loginUser } from "../services/authService";
 import { setUser } from "../redux/authSlice";
+import { setAccessToken } from "../services/api";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
@@ -18,20 +18,19 @@ export default function LoginPage() {
         e.preventDefault();
 
         try {
-            const csrf = await getCsrfToken();
-
             const data = await loginUser(
-                { username, password },
-                csrf
+                { username, password }
             );
+
+            setAccessToken(data.accessToken);
 
             console.log("[LOGIN SUCCESS]", data);
 
-            console.log("[LOGIN] dispatching setUser");
+            console.log("[LOGIN] dispatching setUser", data.username);
             
-            setAccessToken(data.accessToken);
+            console.log("[DEBUG] setUser function:", setUser);
 
-            dispatch(setUser(data));
+            dispatch(setUser({ username: data.username }));
             console.log("[LOGIN] dispatched setUser");
 
             console.log("[LOGIN] navigating to /");

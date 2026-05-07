@@ -9,7 +9,9 @@ const cookieParser = require("cookie-parser");
 const csurf = require("csurf");
 
 const authRoutes = require("./routes/authRoutes");
-const authenticateToken = require("./middleware/authMiddleware");
+const userRoutes = require("./routes/userRoutes");
+
+//const authenticateToken = require("./middleware/authMiddleware");
 const authenticateAccessToken = require("./middleware/authAccessToken");
 
 const app = express();
@@ -40,6 +42,7 @@ const csrfProtection = csurf({
     }
 });
 
+// CSRF Token endpoint
 app.get("/api/csrf-token", (req, res, next) => {
     csrfProtection(req, res, (err) => {
         if (err) return next(err);
@@ -50,7 +53,14 @@ app.get("/api/csrf-token", (req, res, next) => {
     });
 });
 
-app.use("/api/auth", csrfProtection, authRoutes);
+// Public routes - no csrf
+// login, register, refresh, check-user
+app.use("/api/auth", authRoutes);
+
+// Protected user routes - requires access token
+// eg. /api/user/profile
+app.use("/api/user", authenticateAccessToken, userRoutes)
+
 
 app.get("api/user/profile", authenticateAccessToken, (req, res) => {
     res.json({ 
@@ -59,13 +69,22 @@ app.get("api/user/profile", authenticateAccessToken, (req, res) => {
     });
 });
 
-app.get("/api/user/profile", authenticateToken, (req, res) => {
-    res.json({ 
-        userId: req.user.id,
-        username: req.user.username
-    });
-});
+app.post(
+    "/api/auth/logout",
+    authenticateAccessToken,
+    csrfProtection,
+    (req, res) => {
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production"
+        });
 
+        res.json({ message: "Logged out"})
+    }
+)
+
+// Error handling
 app.use((err, req, res, next) => {
     if (err.code === "EBADCSRFTOKEN") {
         return res.status(403).json({ error: "Invalid CSRF token" });
