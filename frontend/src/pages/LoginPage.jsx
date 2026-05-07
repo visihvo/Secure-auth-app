@@ -27,8 +27,6 @@ export default function LoginPage() {
             console.log("[LOGIN SUCCESS]", data);
 
             console.log("[LOGIN] dispatching setUser", data.username);
-            
-            console.log("[DEBUG] setUser function:", setUser);
 
             dispatch(setUser({ username: data.username }));
             console.log("[LOGIN] dispatched setUser");

@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { registerUser, checkUserAvailability } from "../services/authService";
 import { useNavigate, Link } from "react-router-dom";
 import { validatePassword } from "../../validators/password";
-import UsernameUsed from "../components/errors/UsernameUsed"
-import EmailUsed from "../components/errors/EmailUsed";
 import NotMatchingPassword from "../components/errors/NotMatchingPassword";
 import * as Yup from "yup";
 import { useFormik } from "formik";

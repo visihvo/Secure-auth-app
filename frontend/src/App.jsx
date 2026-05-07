@@ -23,8 +23,6 @@ function App() {
                 const newToken = refreshRes.data.accessToken;
                 setAccessToken(newToken);
 
-                await API.post("/auth/refresh");
-
                 const profileRes = await getProfile();
                 
                 console.log("APP - dispatching", profileRes)

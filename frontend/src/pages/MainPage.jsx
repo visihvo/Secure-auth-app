@@ -2,6 +2,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import { logout } from "../redux/authSlice";
 import { useState, useEffect } from "react";
+import { logOutUser } from "../services/authService";
+import { setAccessToken } from "../services/api";
 
 export default function MainPage() {
     const auth = useSelector(state => state.auth);
@@ -11,7 +13,14 @@ export default function MainPage() {
     const [loading, setLoading] = useState(false); 
     const [valid, setValid] = useState(true);
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        try {
+            await logOutUser();
+        } catch (err) {
+            console.log("MAIN - Logout failed", err)
+        }
+
+        setAccessToken(null);
         dispatch(logout());
         navigate("/login");
     };

@@ -25,7 +25,7 @@ exports.login = async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-            path: "/api/auth/refresh"
+            path: "/"
         });
 
         return res.json({ 
@@ -50,12 +50,13 @@ exports.logout = async (req, res) => {
 
         if (!token) return res.sendStatus(204);
 
+        console.log("COOKIE:", req.cookies);
         await authService.logout(token);
 
         res.clearCookie("refreshToken", {
-            httpOnly: true,
-            sameSite: "strict",
-            path: "/api/auth/refresh"
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/"
         });
 
         return res.json({
