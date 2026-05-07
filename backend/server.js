@@ -11,7 +11,6 @@ const csurf = require("csurf");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 
-//const authenticateToken = require("./middleware/authMiddleware");
 const authenticateAccessToken = require("./middleware/authAccessToken");
 
 const app = express();
@@ -42,6 +41,11 @@ const csrfProtection = csurf({
     }
 });
 
+app.get("/api/csrf-token", csrfProtection, (req, res) => {
+    res.json({ csrfToken: req.csrfToken() });
+});
+
+/* 
 // CSRF Token endpoint
 app.get("/api/csrf-token", (req, res, next) => {
     csrfProtection(req, res, (err) => {
@@ -52,22 +56,15 @@ app.get("/api/csrf-token", (req, res, next) => {
         });
     });
 });
+*/
 
 // Public routes - no csrf
 // login, register, refresh, check-user
 app.use("/api/auth", authRoutes);
 
-// Protected user routes - requires access token
+// Protected user routes - requires access token + CSRF
 // eg. /api/user/profile
-app.use("/api/user", authenticateAccessToken, userRoutes)
-
-
-app.get("api/user/profile", authenticateAccessToken, (req, res) => {
-    res.json({ 
-        userId: req.user.id,
-        username: req.user.username
-    });
-});
+app.use("/api/user", authenticateAccessToken, csrfProtection, userRoutes);
 
 app.post(
     "/api/auth/logout",
@@ -77,12 +74,20 @@ app.post(
         res.clearCookie("refreshToken", {
             httpOnly: true,
             sameSite: "lax",
-            secure: process.env.NODE_ENV === "production"
+            secure: process.env.NODE_ENV === "production",
+            path: "/"
+        });
+
+        res.clearCookie("_csrf", {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+            path: "/"
         });
 
         res.json({ message: "Logged out"})
     }
-)
+);
 
 // Error handling
 app.use((err, req, res, next) => {

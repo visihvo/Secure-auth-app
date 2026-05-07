@@ -7,9 +7,6 @@ const registerSchema = require("../utils/validation");
 const ACCESS_SECRET = process.env.ACCESS_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
 
-/* -----------------------------
-   SQLITE WRAPPER (FIXED)
-------------------------------*/
 const dbGet = (sql, params = []) => {
     return new Promise((resolve, reject) => {
         db.get(sql, params, (err, row) => {
@@ -28,9 +25,6 @@ const dbRun = (sql, params = []) => {
     });
 };
 
-/* -----------------------------
-   REGISTER
-------------------------------*/
 exports.register = async (data) => {
     const parsed = registerSchema.safeParse(data);
 
@@ -60,9 +54,6 @@ exports.register = async (data) => {
     return { message: "User registered" };
 };
 
-/* -----------------------------
-   LOGIN
-------------------------------*/
 exports.login = async (data) => {
     const { username, password } = data;
 
@@ -104,16 +95,10 @@ exports.login = async (data) => {
     };
 };
 
-/* -----------------------------
-   LOGOUT (placeholder)
-------------------------------*/
 exports.logout = async () => {
     return true;
 };
 
-/* -----------------------------
-   REFRESH TOKEN
-------------------------------*/
 exports.refresh = async (token) => {
     if (!token) {
         throw new Error("No token");
@@ -134,9 +119,6 @@ exports.refresh = async (token) => {
     });
 };
 
-/* -----------------------------
-   CHECK USER
-------------------------------*/
 exports.checkUser = async (query) => {
     const { username, email } = query;
 

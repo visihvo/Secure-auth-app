@@ -15,11 +15,35 @@ export const setAccessToken = (token) => {
 
 export const getAccessToken = () => accessToken;
 
-API.interceptors.request.use((config) => {
+let csrfToken = null;
+
+export const loadCsrfToken = async () => {
+    const res = await API.get("/csrf-token");
+    csrfToken = res.data.csrfToken;
+};
+
+const getCsrfToken = () => {
+    return csrfToken;
+};
+
+API.interceptors.request.use(async (config) => {
     const token = getAccessToken();
 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // Check if HTTP request is considered to require CSRF TOKEN,
+    // GET is considered safe (as its read only)
+    const method = config.method?.toLowerCase();
+    const needsCsrf = ["post", "put", "patch", "delete"].includes(method);
+    
+    if (needsCsrf) {
+        if (!csrfToken) {
+            await loadCsrfToken();
+        }
+
+        config.headers["X-CSRF-Token"] = getCsrfToken();
     }
 
     return config;
@@ -37,11 +61,12 @@ API.interceptors.response.use(
                 const res = await API.post("/auth/refresh");
 
                 const newToken = res.data.accessToken;
-
                 setAccessToken(newToken);
 
                 originalRequest.headers.Authorization = 
                     `Bearer ${newToken}`;
+
+                await loadCsrfToken();
 
                 return API(originalRequest);
 

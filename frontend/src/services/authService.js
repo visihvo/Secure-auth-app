@@ -41,8 +41,8 @@ export const logOutUser = async () => {
     return unwrap(res);
 };
 
-/* 
 export const getCsrfToken = async() => {
     const res = await API.get("/csrf-token");
+    console.log();
     return res.data.csrfToken;
-}; */
+}; 
