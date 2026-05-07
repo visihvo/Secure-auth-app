@@ -17,27 +17,9 @@ function App() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const bootstrapAuth = async () => {
-            try {
-                const refreshRes = await API.post("/auth/refresh");
-                const newToken = refreshRes.data.accessToken;
-                setAccessToken(newToken);
-
-                const profileRes = await getProfile();
-                
-                console.log("APP - dispatching", profileRes)
-                dispatch(setUser(profileRes.data));
-            } catch(err) {
-                console.log("[AUTH] bootstrap failed");
-
-                dispatch(logout());
-            } finally {
-                dispatch(authChecked());
-                setLoading(false);
-            }
-        };
-
-        bootstrapAuth();
+        dispatch(logout());     
+        dispatch(authChecked());    
+        setLoading(false);
     }, [dispatch]);    
 
     if (loading) {

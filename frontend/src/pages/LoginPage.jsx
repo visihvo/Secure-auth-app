@@ -25,19 +25,17 @@ export default function LoginPage() {
             setAccessToken(data.accessToken);
 
             console.log("[LOGIN SUCCESS]", data);
-
-            console.log("[LOGIN] dispatching setUser", data.username);
-
             dispatch(setUser({ username: data.username }));
-            console.log("[LOGIN] dispatched setUser");
-
-            console.log("[LOGIN] navigating to /");
             navigate("/");
-            console.log("[LOGIN] navigate called");
 
         } catch (err) {
-            console.log("[LOGIN ERROR", err);
-            setError("Login - failed");
+            const status = err.response?.status;
+
+            if (status === 400) {
+                setError("Invalid credentials");
+            } else {
+                setError("Login failed");
+            }
         }
     };
 
@@ -71,71 +69,3 @@ export default function LoginPage() {
         </div>
     );
 }
-
-/* 
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { loginSuccess } from "../redux/authSlice";
-import { loginUser } from "../services/authService";
-import { useNavigate, Link } from "react-router-dom";
-
-function LoginPage() {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
-    const handleLogin = async (e) => {
-        e.preventDefault();
-
-        try {
-            const res = await loginUser({ username, password});
-
-            dispatch(loginSuccess(res.data));
-            navigate("/");
-        } catch (err) {
-            alert("Login failed");
-        }
-    };
-
-    return (
-        <form onSubmit={handleLogin}>
-            <table>
-                <tbody>
-                    <tr style={{textAlign: "left"}}>
-                    <td>Username</td>
-                    <td>Password</td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <input 
-                            placeholder="Username"
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input 
-                            type="password"
-                            placeholder="Password"
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <button type="submit">Login</button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <p>
-                Don't have an account?
-                <Link to="/register">Register</Link>    
-            </p>
-        </form>
-    );
-}
-
-export default LoginPage;
-*/
