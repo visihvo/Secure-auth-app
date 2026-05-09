@@ -18,14 +18,18 @@ export default function LoginPage() {
         e.preventDefault();
 
         try {
+            console.log("[LOGIN] before request");
             const data = await loginUser(
                 { username, password }
             );
+            console.log("[LOGIN] response:", data);
 
             setAccessToken(data.accessToken);
 
             console.log("[LOGIN SUCCESS]", data);
             dispatch(setUser({ username: data.username }));
+
+
             navigate("/");
 
         } catch (err) {

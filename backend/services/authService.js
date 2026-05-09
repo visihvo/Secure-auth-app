@@ -95,10 +95,6 @@ exports.login = async (data) => {
     };
 };
 
-exports.logout = async () => {
-    return true;
-};
-
 exports.refresh = async (token) => {
     if (!token) {
         throw new Error("No token");

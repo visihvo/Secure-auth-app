@@ -3,7 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { logout } from "../redux/authSlice";
 import { useState, useEffect } from "react";
 import { logOutUser } from "../services/authService";
-import { setAccessToken } from "../services/api";
+import { setAccessToken, setCsrfToken } from "../services/api";
 
 export default function MainPage() {
     const auth = useSelector(state => state.auth);
@@ -15,14 +15,24 @@ export default function MainPage() {
 
     const handleLogout = async () => {
         try {
+            console.log("[LOGOUT] clicked");
+
             await logOutUser();
+
+            console.log("[LOGOUT] request completed");
+
+            setAccessToken(null);
+            dispatch(logout());
+            navigate("/login");
+            console.log("logged out")
         } catch (err) {
             console.log("MAIN - Logout failed", err)
-        }
 
-        setAccessToken(null);
-        dispatch(logout());
-        navigate("/login");
+            console.log("Fallback cleanup")
+            setAccessToken(null);
+            dispatch(logout());
+            navigate("/login");
+        }
     };
 
     if (auth.loading) return <p>Loading...</p>;
@@ -31,7 +41,7 @@ export default function MainPage() {
         return <Navigate to="/login" />;
     }
 
-    const username = auth.user.username;
+    const username = auth.user?.username;
 
     return (
         <div>

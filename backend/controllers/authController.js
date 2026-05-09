@@ -46,12 +46,17 @@ exports.login = async (req, res) => {
 
 exports.logout = async (req, res) => {
     try {
+        console.log("=== LOGOUT CONTROLLER HIT ===");
+        console.log("User:", req.user);
+        console.log("Session ID:", req.sessionID);
+
         const token = req.cookies.refreshToken;
 
-        if (!token) return res.sendStatus(204);
+        if (!token) {
+            return res.status(204).end();
+        }
 
         console.log("COOKIE:", req.cookies);
-        await authService.logout(token);
 
         res.clearCookie("refreshToken", {
             secure: process.env.NODE_ENV === "production",
@@ -59,17 +64,25 @@ exports.logout = async (req, res) => {
             path: "/"
         });
 
-        return res.json({
-            success: true,
-            data: {
-                message: "Logged out"
+        req.sessionStore.destroy(req.sessionID, (err) => {
+            if (err) {
+                console.log("Session destroy error:", err);
+                return res.status(500).json({ error: "Failed to destroy session" });
             }
+
+            res.clearCookie("sid");
+
+            return res.json({
+                success: true,
+                data: { message: "Logged out" }
+            });
         });
 
     } catch (err) {
+        console.log("Logout error:", err);
         return res.status(500).json({
             success: false,
-            error: "Logout failed" 
+            error: "Logout failed"
         });
     }
 };

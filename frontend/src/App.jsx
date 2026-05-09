@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { setUser, logout, authChecked } from "./redux/authSlice";
 
 import { getProfile } from "./services/authService"
-import { setAccessToken } from "./services/api";
+import { loadCsrfToken, setAccessToken } from "./services/api";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -15,6 +15,19 @@ import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        console.log("[APP] init CSRF start");
+
+        loadCsrfToken()
+            .then(() => {
+                console.log("[APP] CSRF ready");
+            })
+            .catch(err => {
+                console.log("[APP] CSRF failed", err);
+            });
+
+    }, []);
 
     useEffect(() => {
         dispatch(logout());     

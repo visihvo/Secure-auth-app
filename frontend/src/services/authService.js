@@ -1,4 +1,4 @@
-import API from "./api";
+import API, { loadCsrfToken, setAccessToken } from "./api";
 
 const unwrap = (res) => {
     if (!res.data.success) {
@@ -20,7 +20,15 @@ export const loginUser = async (data) => {
         withCredentials: true
     });
 
-    return unwrap(res);
+    const unwrappedRes = unwrap(res);
+
+    console.log("should be access token", unwrappedRes.accessToken);
+    setAccessToken(unwrappedRes.accessToken);
+
+    console.log(unwrappedRes)
+    await loadCsrfToken();
+
+    return unwrappedRes;
 };
 
 export const checkUserAvailability = async (username, email) => {
@@ -37,6 +45,7 @@ export const getProfile = async () => {
 };
 
 export const logOutUser = async () => {
+    console.log("Auth service - logging out");
     const res = await API.post("/auth/logout");
     return unwrap(res);
 };
