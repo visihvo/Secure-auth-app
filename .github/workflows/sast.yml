@@ -41,7 +41,7 @@ jobs:
 
       - name: Run frontend tests with coverage
         working-directory: frontend
-        run: npm test -- --coverage --passWithNoTests
+        run: npm test
 
       # -------------------------
       # SonarQube SAST Scan
