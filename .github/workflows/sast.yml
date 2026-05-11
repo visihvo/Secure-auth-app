@@ -46,11 +46,12 @@ jobs:
       # -------------------------
       # SonarQube SAST Scan
       # -------------------------
-      - name: SonarQube Scan
+            - name: SonarQube Scan
+        shell: pwsh
         run: |
           npx sonar-scanner `
-            -Dsonar.projectKey=Secure-web-with-user-authentication `
-            -Dsonar.sources=backend,frontend `
-            -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info `
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} `
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -D"sonar.projectKey=Secure-web-with-user-authentication" `
+            -D"sonar.sources=backend,frontend" `
+            -D"sonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info" `
+            -D"sonar.host.url=${{ secrets.SONAR_HOST_URL }}" `
+            -D"sonar.login=${{ secrets.SONAR_TOKEN }}"
