@@ -46,7 +46,7 @@ jobs:
       # -------------------------
       # SonarQube SAST Scan
       # -------------------------
-            - name: SonarQube Scan
+      - name: SonarQube Scan
         shell: pwsh
         run: |
           npx sonar-scanner `
