@@ -48,9 +48,9 @@ jobs:
       # -------------------------
       - name: SonarQube Scan
         run: |
-          npx sonar-scanner \
-            -Dsonar.projectKey=Secure-web-with-user-authentication \
-            -Dsonar.sources=backend,frontend \
-            -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info \
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+          npx sonar-scanner `
+            -Dsonar.projectKey=Secure-web-with-user-authentication `
+            -Dsonar.sources=backend,frontend `
+            -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info `
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} `
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
