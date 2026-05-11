@@ -22,6 +22,11 @@ const csrfMiddleware = require("./middleware/csrfMiddleware");
 const app = express();
 const PORT = 5000; // Hide this?
 
+const allowedOrigins = [
+    process.env.CLIENT_URL, // Vite dev
+    process.env.DOCKER_CLIENT_URL // Docker
+];
+
 (async () => {
     const redisClient = createClient({
         url: process.env.REDIS_URL || "redis://localhost:6379"
@@ -36,7 +41,12 @@ const PORT = 5000; // Hide this?
     app.use(helmet());
 
     app.use(cors({ 
-        origin: "http://localhost:5173",
+        origin: function (origin, callback) {
+            if (!origin || allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
+            return callback(new Error("Not allowed by CORS"));
+        },
         credentials: true,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
         allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token", "x-csrf-token", "Cookie"],

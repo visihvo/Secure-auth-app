@@ -3,12 +3,12 @@ import store from "../redux/store";
 import { logout, setUser } from "../redux/authSlice";
 
 const API = axios.create({
-    baseURL: "http://localhost:5000/api", // hide this?
+    baseURL: "/api",
     withCredentials: true
 });
 
 const csrfClient = axios.create({
-    baseURL: "http://localhost:5000/api", 
+    baseURL: "/api",
     withCredentials: true
 });
 
