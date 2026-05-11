@@ -1,0 +1,56 @@
+name: SAST Scan
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  sast:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # -------------------------
+      # Backend
+      # -------------------------
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install
+
+      - name: Run backend tests with coverage
+        working-directory: backend
+        run: npm test -- --coverage --passWithNoTests
+
+      # -------------------------
+      # Frontend
+      # -------------------------
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Run frontend tests with coverage
+        working-directory: frontend
+        run: npm test -- --coverage --passWithNoTests
+
+      # -------------------------
+      # SonarQube SAST Scan
+      # -------------------------
+      - name: SonarQube Scan
+        run: |
+          npx sonar-scanner \
+            -Dsonar.projectKey=Secure-web-with-user-authentication \
+            -Dsonar.sources=backend,frontend \
+            -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}

@@ -1,7 +1,3 @@
-import { describe, it, expect } from "vitest";
-
-describe("frontend sanity", () => {
-  it("works", () => {
-    expect(true).toBe(true);
-  });
+test("backend sanity", () => {
+  expect(1).toBe(1);
 });
