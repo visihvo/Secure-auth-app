@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../services/authService";
 import { setUser } from "../redux/authSlice";
 import { setAccessToken } from "../services/api";
+import { log } from "../utils/logger";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
@@ -18,15 +19,15 @@ export default function LoginPage() {
         e.preventDefault();
 
         try {
-            console.log("[LOGIN] before request");
+            log("[LOGIN] before request");
             const data = await loginUser(
                 { username, password }
             );
-            console.log("[LOGIN] response:", data);
+            log("[LOGIN] response:", data);
 
             setAccessToken(data.accessToken);
 
-            console.log("[LOGIN SUCCESS]", data);
+            log("[LOGIN SUCCESS]", data);
             dispatch(setUser({ username: data.username }));
 
 

@@ -8,8 +8,11 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await redisClient.quit();
-
+    try {
+      if (redisClient.isOpen) {
+        await redisClient.quit();
+      }
+    } catch (e) {}
     if (server) {
         server.close();
     }

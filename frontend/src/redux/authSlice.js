@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+import { log } from "../utils/logger";
+
 const authSlice = createSlice({
     name: "auth",
     initialState: {
@@ -10,8 +12,8 @@ const authSlice = createSlice({
     reducers: {
         setUser(state, action) {
             const data = action.payload;
-            console.log(action, state)
-            console.log("[REDUX] setUser fired", data);
+            log(action, state)
+            log("[REDUX] setUser fired", data);
 
             state.user = {
                 username: data.username

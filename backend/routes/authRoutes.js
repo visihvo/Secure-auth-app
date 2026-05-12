@@ -5,9 +5,13 @@ const authLimiter = require("../middleware/rateLimit");
 const csrfMiddleware = require("../middleware/csrfMiddleware");
 const authenticateAccessToken = require("../middleware/authAccessToken");
 
-console.log("authRoutes loaded");
-console.log("csrfMiddleware type:", typeof csrfMiddleware);
-console.log("logout handler type:", typeof authController.logout);
+const isDev = process.env.NODE_ENV === ("development");
+
+if (isDev) {
+    console.log("authRoutes loaded");
+    console.log("csrfMiddleware type:", typeof csrfMiddleware);
+    console.log("logout handler type:", typeof authController.logout);
+}
 
 router.post("/register", authLimiter, authController.register);
 router.post("/login", authLimiter, authController.login);

@@ -1,6 +1,7 @@
 import axios from "axios";
 import store from "../redux/store";
 import { logout, setUser } from "../redux/authSlice";
+import { log } from "../utils/logger";
 
 const API = axios.create({
     baseURL: "/api",
@@ -24,17 +25,17 @@ export const setCsrfToken = (token) => {
 
 export const loadCsrfToken = async () => {
     try {
-        console.log("[CSRF] loading...");
+        log("[CSRF] loading...");
 
         const res = await csrfClient.get("/csrf-token");
-        console.log("[CSRF] response:", res.data);
+        log("[CSRF] response:", res.data);
 
         csrfToken = res.data.csrfToken;
-        console.log("[CSRF] stored in memory:", csrfToken);
+        log("[CSRF] stored in memory:", csrfToken);
 
         return csrfToken;
     } catch (err) {
-        console.log("API - CSRF token load failed", err);
+        log("API - CSRF token load failed", err);
         throw err;
     }
 };
@@ -44,17 +45,17 @@ const getCsrfToken = () => { return csrfToken; };
 
 API.interceptors.request.use((config) => {
     const token = getAccessToken();
-    console.log("inter req");
+    log("inter req");
 
     if (token) {
-        console.log(token)
+        log(token)
         config.headers.Authorization = `Bearer ${token}`;
     }
 
     // Check if HTTP request is considered to require CSRF TOKEN,
     // GET is considered safe (as its read only)
-    console.log("METHOD:", config.method);
-    console.log("URL:", config.url);
+    log("METHOD:", config.method);
+    log("URL:", config.url);
 
     const method = config.method?.toLowerCase();
     const needsCsrf = ["post", "put", "patch", "delete"].includes(method);
@@ -69,27 +70,27 @@ API.interceptors.request.use((config) => {
     const isExempt = csrfExemptRoutes.some(route =>
         config.url?.includes(route)
     );
-    console.log("is exempt", isExempt);
-    console.log("csrf token", csrfToken);
-    console.log("needs csrf", needsCsrf);
+    log("is exempt", isExempt);
+    log("csrf token", csrfToken);
+    log("needs csrf", needsCsrf);
 
     if (needsCsrf && !isExempt) {
         if (csrfToken) {
-            console.log("inside if");
+            log("inside if");
             config.headers["X-CSRF-Token"] = csrfToken;
         } else {
-            console.log("API - CSRF was needed but token does not exist");
+            log("API - CSRF was needed but token does not exist");
         }
     }
 
-    console.log("config to be returned", config);
+    log("config to be returned", config);
     return config;
 });
 
 API.interceptors.response.use(
     (res) => res,
     async (err) => {
-        console.log("inter res");
+        log("inter res");
         const originalRequest = err.config;
 
         if (err.response?.status === 401 && !originalRequest._retry) {
@@ -107,7 +108,7 @@ API.interceptors.response.use(
                 return API(originalRequest);
 
             } catch (refreshError) {
-                console.log("[AUTH] refresh failed -> logout");
+                log("[AUTH] refresh failed -> logout");
                 setAccessToken(null);
                 store.dispatch(logout());
 

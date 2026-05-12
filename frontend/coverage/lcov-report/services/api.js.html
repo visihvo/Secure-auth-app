@@ -184,7 +184,9 @@
 <a name='L119'></a><a href='#L119'>119</a>
 <a name='L120'></a><a href='#L120'>120</a>
 <a name='L121'></a><a href='#L121'>121</a>
-<a name='L122'></a><a href='#L122'>122</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -308,6 +310,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import axios from "axios";
 import store from "../redux/store";
 import { logout, setUser } from "../redux/authSlice";
+import { log } from "../utils/logger";
 &nbsp;
 const API = axios.create({
     baseURL: "/api",
@@ -331,17 +334,17 @@ export const setCsrfToken = <span class="fstat-no" title="function not covered" 
 &nbsp;
 export const loadCsrfToken = <span class="fstat-no" title="function not covered" >async </span>() =&gt; {
 <span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >        console.log("[CSRF] loading...");</span>
+<span class="cstat-no" title="statement not covered" >        log("[CSRF] loading...");</span>
 &nbsp;
         const res = <span class="cstat-no" title="statement not covered" >await csrfClient.get("/csrf-token");</span>
-<span class="cstat-no" title="statement not covered" >        console.log("[CSRF] response:", res.data);</span>
+<span class="cstat-no" title="statement not covered" >        log("[CSRF] response:", res.data);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        csrfToken = res.data.csrfToken;</span>
-<span class="cstat-no" title="statement not covered" >        console.log("[CSRF] stored in memory:", csrfToken);</span>
+<span class="cstat-no" title="statement not covered" >        log("[CSRF] stored in memory:", csrfToken);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        return csrfToken;</span>
     } catch (err) {
-<span class="cstat-no" title="statement not covered" >        console.log("API - CSRF token load failed", err);</span>
+<span class="cstat-no" title="statement not covered" >        log("API - CSRF token load failed", err);</span>
 <span class="cstat-no" title="statement not covered" >        throw err;</span>
     }
 };
@@ -351,17 +354,17 @@ const getCsrfToken = <span class="fstat-no" title="function not covered" >()</sp
 &nbsp;
 API.interceptors.request.use(<span class="fstat-no" title="function not covered" >(c</span>onfig) =&gt; {
     const token = <span class="cstat-no" title="statement not covered" >getAccessToken();</span>
-<span class="cstat-no" title="statement not covered" >    console.log("inter req");</span>
+<span class="cstat-no" title="statement not covered" >    log("inter req");</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    if (token) {</span>
-<span class="cstat-no" title="statement not covered" >        console.log(token)</span>
+<span class="cstat-no" title="statement not covered" >        log(token)</span>
 <span class="cstat-no" title="statement not covered" >        config.headers.Authorization = `Bearer ${token}`;</span>
     }
 &nbsp;
     // Check if HTTP request is considered to require CSRF TOKEN,
     // GET is considered safe (as its read only)
-<span class="cstat-no" title="statement not covered" >    console.log("METHOD:", config.method);</span>
-<span class="cstat-no" title="statement not covered" >    console.log("URL:", config.url);</span>
+<span class="cstat-no" title="statement not covered" >    log("METHOD:", config.method);</span>
+<span class="cstat-no" title="statement not covered" >    log("URL:", config.url);</span>
 &nbsp;
     const method = <span class="cstat-no" title="statement not covered" >config.method?.toLowerCase();</span>
     const needsCsrf = <span class="cstat-no" title="statement not covered" >["post", "put", "patch", "delete"].includes(method);</span>
@@ -376,27 +379,27 @@ API.interceptors.request.use(<span class="fstat-no" title="function not covered"
     const isExempt = <span class="cstat-no" title="statement not covered" >csrfExemptRoutes.some(<span class="fstat-no" title="function not covered" >route </span>=&gt;</span>
 <span class="cstat-no" title="statement not covered" >        config.url?.includes(route)</span>
     );
-<span class="cstat-no" title="statement not covered" >    console.log("is exempt", isExempt);</span>
-<span class="cstat-no" title="statement not covered" >    console.log("csrf token", csrfToken);</span>
-<span class="cstat-no" title="statement not covered" >    console.log("needs csrf", needsCsrf);</span>
+<span class="cstat-no" title="statement not covered" >    log("is exempt", isExempt);</span>
+<span class="cstat-no" title="statement not covered" >    log("csrf token", csrfToken);</span>
+<span class="cstat-no" title="statement not covered" >    log("needs csrf", needsCsrf);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    if (needsCsrf &amp;&amp; !isExempt) {</span>
 <span class="cstat-no" title="statement not covered" >        if (csrfToken) {</span>
-<span class="cstat-no" title="statement not covered" >            console.log("inside if");</span>
+<span class="cstat-no" title="statement not covered" >            log("inside if");</span>
 <span class="cstat-no" title="statement not covered" >            config.headers["X-CSRF-Token"] = csrfToken;</span>
         } else {
-<span class="cstat-no" title="statement not covered" >            console.log("API - CSRF was needed but token does not exist");</span>
+<span class="cstat-no" title="statement not covered" >            log("API - CSRF was needed but token does not exist");</span>
         }
     }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    console.log("config to be returned", config);</span>
+<span class="cstat-no" title="statement not covered" >    log("config to be returned", config);</span>
 <span class="cstat-no" title="statement not covered" >    return config;</span>
 });
 &nbsp;
 API.interceptors.response.use(
 <span class="fstat-no" title="function not covered" >    (r</span>es) =&gt; <span class="cstat-no" title="statement not covered" >res,</span>
 <span class="fstat-no" title="function not covered" >    async </span>(err) =&gt; {
-<span class="cstat-no" title="statement not covered" >        console.log("inter res");</span>
+<span class="cstat-no" title="statement not covered" >        log("inter res");</span>
         const originalRequest = <span class="cstat-no" title="statement not covered" >err.config;</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        if (err.response?.status === 401 &amp;&amp; !originalRequest._retry) {</span>
@@ -414,7 +417,7 @@ API.interceptors.response.use(
 <span class="cstat-no" title="statement not covered" >                return API(originalRequest);</span>
 &nbsp;
             } catch (refreshError) {
-<span class="cstat-no" title="statement not covered" >                console.log("[AUTH] refresh failed -&gt; logout");</span>
+<span class="cstat-no" title="statement not covered" >                log("[AUTH] refresh failed -&gt; logout");</span>
 <span class="cstat-no" title="statement not covered" >                setAccessToken(null);</span>
 <span class="cstat-no" title="statement not covered" >                store.dispatch(logout());</span>
 &nbsp;
@@ -433,7 +436,7 @@ export default API;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-12T10:17:49.847Z
+                at 2026-05-12T13:14:23.449Z
             </div>
         <script src="../prettify.js"></script>
         <script>
