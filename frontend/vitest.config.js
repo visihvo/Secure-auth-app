@@ -5,6 +5,14 @@ export default defineConfig({
         globals: true,
         environment: "jsdom",
         setupFiles: "./tests/setupTests.js",
+
+        pool: "threads",
+        poolOptions: {
+            threads: {
+                singleThread: true
+            }
+        },
+
         coverage: {
             provider: "v8",
             reporter: ["text", "lcov"]
