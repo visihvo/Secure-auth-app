@@ -21,31 +21,17 @@ jobs:
         with:
           node-version: 20
 
-      # -------------------------
-      # Backend
-      # -------------------------
       - name: Install backend dependencies
         working-directory: backend
         run: npm install
 
-      - name: Run backend tests with coverage
-        working-directory: backend
-        run: npm test -- --coverage --passWithNoTests
-
-      # -------------------------
-      # Frontend
-      # -------------------------
       - name: Install frontend dependencies
         working-directory: frontend
         run: npm install
 
-      - name: Run frontend tests with coverage
-        working-directory: frontend
+      - name: Run all tests with coverage
         run: npm test
 
-      # -------------------------
-      # SonarQube SAST Scan
-      # -------------------------
       - name: SonarQube Scan
         shell: powershell
         run: |
