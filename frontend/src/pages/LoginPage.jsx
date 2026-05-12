@@ -48,13 +48,17 @@ export default function LoginPage() {
             <h2>Login</h2>
 
             <form onSubmit={handleLogin}>
+                <label htmlFor="username">Username</label>
                 <input
+                    id="username"
                     placeholder="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
 
+                <label htmlFor="password">Password</label>
                 <input
+                    id="password"
                     type="password"
                     placeholder="password"
                     value={password}
