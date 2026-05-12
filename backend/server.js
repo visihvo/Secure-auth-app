@@ -27,7 +27,11 @@ const isTest = process.env.NODE_ENV === "test";
 // Used for debugging logs etc.
 const isDev = process.env.NODE_ENV === ("development");
 
-if (isTest && !process.env.SESSION_SECRET) {
+const SESSION_SECRET =
+    process.env.SESSION_SECRET ||
+    (isTest ? "test-secret" : null);
+
+if (!SESSION_SECRET) {
     throw new Error("Server - SESSION_SECRET is required");
 }
 
@@ -74,9 +78,7 @@ function createSession() {
                 prefix: "sess:"
             }),
         name: "sid",
-        secret: isTest
-            ? "test-secret"
-            : process.env.SESSION_SECRET,
+        secret: SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
         rolling: false,
