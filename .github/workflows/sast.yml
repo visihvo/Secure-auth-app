@@ -35,6 +35,28 @@ jobs:
       - name: Run all tests with coverage
         run: npm test
 
+      - name: Build Docker images
+        run: docker compose build --pull
+
+      - name: Snyk Scan
+      # run: npx snyk test --severity-threshold=high
+        run: npx snyk test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Snyk results to dashboard
+        run: npx snyk monitor
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Trivy Scan Backend Image
+      # run: trivy image --severity HIGH,CRITICAL --exit-code 1 secure-auth-app-backend
+        run: trivy image secure-auth-app-backend
+
+      - name: Trivy Scan Frontend Image
+      # run: trivy image --severity HIGH,CRITICAL --exit-code 1 secure-auth-app-frontend
+        run: trivy image secure-auth-app-frontend
+
       - name: SonarQube Scan
         shell: powershell
         run: |
