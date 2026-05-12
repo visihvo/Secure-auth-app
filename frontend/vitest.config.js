@@ -6,12 +6,7 @@ export default defineConfig({
         environment: "jsdom",
         setupFiles: "./tests/setupTests.js",
 
-        pool: "threads",
-        poolOptions: {
-            threads: {
-                singleThread: true
-            }
-        },
+        pool: "forks",
 
         coverage: {
             provider: "v8",
