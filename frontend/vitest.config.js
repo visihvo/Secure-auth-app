@@ -6,7 +6,7 @@ export default defineConfig({
         environment: "jsdom",
         setupFiles: "./tests/setupTests.js",
 
-        pool: "forks",
+        //pool: "forks",
 
         coverage: {
             provider: "v8",
