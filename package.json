@@ -13,6 +13,7 @@
     "sonar": "sonar-scanner"
   },
   "devDependencies": {
+    "@cyclonedx/cyclonedx-npm": "^4.2.1",
     "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
     "sonar-scanner": "^3.1.0"

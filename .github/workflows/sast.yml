@@ -38,6 +38,22 @@ jobs:
       - name: Build Docker images
         run: docker compose build --pull
 
+      - name: Start application containers
+        run: docker-compose up -d
+
+      - name: Wait for application startup
+        shell: powershell
+        run: Start-Sleep -Seconds 45
+
+      - name: OWASP ZAP Baseline Scan
+        continue-on-error: true
+        shell: powershell
+        run: |
+          docker run --rm `
+            -t ghcr.io/zaproxy/zaproxy:stable `
+            zap-baseline.py `
+            -t http://host.docker.internal:8080
+
       - name: Snyk Scan
       # run: npx snyk test --severity-threshold=high
         run: npx snyk test
@@ -57,7 +73,20 @@ jobs:
       # run: trivy image --severity HIGH,CRITICAL --exit-code 1 secure-auth-app-frontend
         run: trivy image secure-auth-app-frontend
 
+      - name: Generate CycloneDX
+        run: npx @cyclonedx/cyclonedx-npm --output-file sbom.json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cyclonedx-sbom
+          path: sbom.json
+
       - name: SonarQube Scan
         shell: powershell
         run: |
           npx sonar-scanner "-Dsonar.projectKey=Secure-web-with-user-authentication" "-Dsonar.sources=backend,frontend" "-Dsonar.exclusions=**/node_modules/**,**/coverage/**,**/dist/**,**/build/**,backend/coverage/**,frontend/coverage/**" "-Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info" "-Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}" "-Dsonar.login=${{ secrets.SONAR_TOKEN }}"
+
+      - name: Stop containers
+        if: always()
+        run: docker compose down
