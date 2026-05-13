@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { registerUser, checkUserAvailability } from "../services/authService";
 import { useNavigate, Link } from "react-router-dom";
-import { validatePassword } from "../../validators/password";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { log } from "../utils/logger";
