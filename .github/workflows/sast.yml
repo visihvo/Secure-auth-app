@@ -35,11 +35,18 @@ jobs:
       - name: Run all tests with coverage
         run: npm test
 
-      - name: Build Docker images
-        run: docker compose build --pull
+      - name: Create backend .env file
+        shell: powershell
+        run: |
+          @"
+          SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          REDIS_URL=redis://redis:6379
+          NODE_ENV=test
+          "@ | Out-File -FilePath backend/.env -Encoding utf8
 
-      - name: Start application containers
-        run: docker-compose up -d
+      - name: Build Docker images and start compose
+        run: docker-compose up -d --build
 
       - name: Wait for application startup
         shell: powershell
