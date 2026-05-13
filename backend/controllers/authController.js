@@ -1,5 +1,7 @@
 const authService = require("../services/authService");
 
+const isDev = process.env.NODE_ENV === ("development");
+
 exports.register = async (req, res) => {
     try {
         const result = await authService.register(req.body);
@@ -46,9 +48,7 @@ exports.login = async (req, res) => {
 
 exports.logout = async (req, res) => {
     try {
-        console.log("=== LOGOUT CONTROLLER HIT ===");
-        console.log("User:", req.user);
-        console.log("Session ID:", req.sessionID);
+        if (isDev) { console.log("=== LOGOUT CONTROLLER HIT ==="); console.log("User:", req.user); console.log("Session ID:", req.sessionID);}
 
         const token = req.cookies.refreshToken;
 
@@ -56,7 +56,7 @@ exports.logout = async (req, res) => {
             return res.status(204).end();
         }
 
-        console.log("COOKIE:", req.cookies);
+        if (isDev) console.log("COOKIE:", req.cookies);
 
         res.clearCookie("refreshToken", {
             secure: process.env.NODE_ENV === "production",
@@ -66,7 +66,7 @@ exports.logout = async (req, res) => {
 
         req.sessionStore.destroy(req.sessionID, (err) => {
             if (err) {
-                console.log("Session destroy error:", err);
+                if (isDev) console.log("Session destroy error:", err);
                 return res.status(500).json({ error: "Failed to destroy session" });
             }
 
@@ -79,7 +79,7 @@ exports.logout = async (req, res) => {
         });
 
     } catch (err) {
-        console.log("Logout error:", err);
+        if (isDev) console.log("Logout error:", err);
         return res.status(500).json({
             success: false,
             error: "Logout failed"
