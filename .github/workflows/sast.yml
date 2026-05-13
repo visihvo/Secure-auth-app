@@ -57,9 +57,17 @@ jobs:
         shell: powershell
         run: |
           docker run --rm `
+            -v "${{ github.workspace }}:/zap/wrk:rw" `
             -t ghcr.io/zaproxy/zaproxy:stable `
-            zap-baseline.py `
-            -t http://host.docker.internal:8080
+            zap-full-scan.py `
+            -t http://host.docker.internal:8080 `
+            -r zap-report.html
+      
+      - name: Upload ZAP Report Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: zap-report.html
 
       - name: Snyk Scan
       # run: npx snyk test --severity-threshold=high
