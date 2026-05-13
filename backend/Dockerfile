@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:26.1.0-alpine3.23
 
 WORKDIR /app
 ENV npm_config_build_from_source=sqlite3
