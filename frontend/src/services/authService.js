@@ -1,4 +1,5 @@
 import API, { loadCsrfToken, setAccessToken } from "./api";
+import { log } from "../utils/logger";
 
 const unwrap = (res) => {
     if (!res.data.success) {
@@ -22,10 +23,10 @@ export const loginUser = async (data) => {
 
     const unwrappedRes = unwrap(res);
 
-    console.log("should be access token", unwrappedRes.accessToken);
+    log("should be access token", unwrappedRes.accessToken);
     setAccessToken(unwrappedRes.accessToken);
 
-    console.log(unwrappedRes)
+    log(unwrappedRes)
     await loadCsrfToken();
 
     return unwrappedRes;
@@ -45,13 +46,13 @@ export const getProfile = async () => {
 };
 
 export const logOutUser = async () => {
-    console.log("Auth service - logging out");
+    log("Auth service - logging out");
     const res = await API.post("/auth/logout");
     return unwrap(res);
 };
 
 export const getCsrfToken = async() => {
     const res = await API.get("/csrf-token");
-    console.log();
+    log();
     return res.data.csrfToken;
 }; 

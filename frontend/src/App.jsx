@@ -11,20 +11,21 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import MainPage from "./pages/MainPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { log } from "./utils/logger";
 
 function App() {
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        console.log("[APP] init CSRF start");
+        log("[APP] init CSRF start");
 
         loadCsrfToken()
             .then(() => {
-                console.log("[APP] CSRF ready");
+                log("[APP] CSRF ready");
             })
             .catch(err => {
-                console.log("[APP] CSRF failed", err);
+                log("[APP] CSRF failed", err);
             });
 
     }, []);
