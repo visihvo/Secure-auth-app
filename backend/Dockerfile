@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY . .
+RUN mkdir -p /app/data && chown -R node:node /app/data
 EXPOSE 5000
 USER node
 CMD ["node", "server.js"]

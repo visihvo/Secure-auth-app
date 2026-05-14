@@ -1,5 +1,5 @@
 const authService = require("../services/authService");
-const { log } = require("../../frontend/src/utils/logger");
+const { log } = require("../utils/logger");
 
 /**
  * Handles user registration requests
@@ -25,7 +25,6 @@ exports.register = async (req, res) => {
         });
 
     } catch (err) {
-
         return res.status(400).json({
             success: false,
             error: "Registration failed"
