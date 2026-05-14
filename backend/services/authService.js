@@ -7,6 +7,14 @@ const registerSchema = require("../utils/validation");
 const ACCESS_SECRET = process.env.ACCESS_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
 
+/**
+ * Helper function for SELECT queries.
+ * Uses parametrized SQL queries to prevent SQL injection.
+ * 
+ * @param {string} sql - SQL query string
+ * @param {Array} params - Query parameters
+ * @returns Database row
+ */
 const dbGet = (sql, params = []) => {
     return new Promise((resolve, reject) => {
         db.get(sql, params, (err, row) => {
@@ -16,6 +24,14 @@ const dbGet = (sql, params = []) => {
     });
 };
 
+/**
+ * Helper function for INSERT/UPDATE/DELETE queries.
+ * Uses parameterized queries to safely handle user input.
+ * 
+ * @param {*} sql - SQL query string
+ * @param {*} params - Query parameters
+ * @returns SQL execution result
+ */
 const dbRun = (sql, params = []) => {
     return new Promise((resolve, reject) => {
         db.run(sql, params, function (err) {
@@ -25,6 +41,18 @@ const dbRun = (sql, params = []) => {
     });
 };
 
+/**
+ * Registers a new user.
+ * 
+ * Security features:
+ * - Backend validation using Zod schema
+ * - Parametrized SQL queries
+ * - Password hashing using bcrypt
+ * - Secure UUID generation
+ * @param {Object} data User registration data from frontend (credentials)
+ * @returns Registration success
+ * @throws {Error} Throws if validation fails or user already exists
+ */
 exports.register = async (data) => {
     const parsed = registerSchema.safeParse(data);
 
@@ -54,6 +82,18 @@ exports.register = async (data) => {
     return { message: "User registered" };
 };
 
+/**
+ * Authenticates a user and generates JWT tokens.
+ * 
+ * Security features:
+ * - Generic authentication messages
+ * - Secure password verification with bcrypt
+ * - JWT access and refresh token generation
+ * 
+ * @param {Object} data - Login request data (credentials)
+ * @returns Resolves with generated tokens and username
+ * @throws {Error} Throws if credentials are invalid.
+ */
 exports.login = async (data) => {
     const { username, password } = data;
 
@@ -70,6 +110,7 @@ exports.login = async (data) => {
         throw new Error("Invalid credentials");
     }
 
+    // Compare given password to password stored for given username
     const match = await bcrypt.compare(password, user.password_hash);
 
     if (!match) {
@@ -95,6 +136,17 @@ exports.login = async (data) => {
     };
 };
 
+/**
+ * Generates a new access token using a valid refresh token.
+ * 
+ * Security features:
+ * - Refresh token verification
+ * - Short-lived access tokens
+ * 
+ * @param {string} token - Refresh token
+ * @returns Resolves with a new JWT access token
+ * @throws {Error} Throws if token is missing or invalid
+ */
 exports.refresh = async (token) => {
     if (!token) {
         throw new Error("No token");
@@ -115,6 +167,14 @@ exports.refresh = async (token) => {
     });
 };
 
+/**
+ * Checks whether username or email already exists.
+ * 
+ * Used for frontend validation and registration checks.
+ * 
+ * @param {*} query - User lookup data (username and email)
+ * @returns Resolves with username/email existence 
+ */
 exports.checkUser = async (query) => {
     const { username, email } = query;
 

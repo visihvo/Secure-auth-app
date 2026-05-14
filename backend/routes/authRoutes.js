@@ -18,13 +18,6 @@ router.post("/login", authLimiter, authController.login);
 router.post("/refresh", authController.refresh);
 router.get("/check-user", authController.checkUser);
 
-router.post(
-    "/logout",
-    authenticateAccessToken,
-    csrfMiddleware,
-    authController.logout
-);
-
 router.post("/logout", (req, res, next) => {
     console.log("=== ROUTER LOGOUT HIT ===");
     next();
