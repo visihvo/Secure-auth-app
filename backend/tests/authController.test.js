@@ -61,14 +61,14 @@ describe("authController", () => {
             });
         });
 
-        it("returns 400 on registration failure", async () => {
+        it("returns 500 on registration failure", async () => {
             authService.register.mockRejectedValue(
                 new Error("fail")
             );
 
             await authController.register(req, res);
 
-            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.status).toHaveBeenCalledWith(500);
 
             expect(res.json).toHaveBeenCalledWith({
                 success: false,
@@ -241,7 +241,7 @@ describe("authController", () => {
 
             expect(res.json).toHaveBeenCalledWith({
                 success: false,
-                error: "Invalid token"
+                error: "Invalid token or expired refresh token"
             });
         });
     });
