@@ -1,3 +1,4 @@
+const { ZodError } = require("zod");
 const authService = require("../services/authService");
 const { log } = require("../utils/logger");
 
@@ -15,7 +16,6 @@ const { log } = require("../utils/logger");
  */
 exports.register = async (req, res) => {
     try {
-
         // Forward validated request body to authentication service
         const result = await authService.register(req.body);
 
@@ -25,7 +25,24 @@ exports.register = async (req, res) => {
         });
 
     } catch (err) {
-        return res.status(400).json({
+        if (err instanceof ZodError) {
+            return res.status(400).json({
+                success: false,
+                error: "Validation failed",
+                fields: err.flatten().fieldErrors
+            });
+        }
+
+        if (err.message === "User or email already exists") {
+            return res.status(409).json({
+                success: false,
+                error: "Username or email already in use"
+            });
+        }
+
+        log("AUTH CTRL ERR:", err);
+
+        return res.status(500).json({
             success: false,
             error: "Registration failed"
         });

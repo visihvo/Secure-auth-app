@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { randomUUID } = require("crypto");
 const registerSchema = require("../utils/validation");
+const { log } = require("../utils/logger");
 
 const ACCESS_SECRET = process.env.ACCESS_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
@@ -57,7 +58,7 @@ exports.register = async (data) => {
     const parsed = registerSchema.safeParse(data);
 
     if (!parsed.success) {
-        throw new Error("Invalid input");
+        throw parsed.error;
     }
 
     const { username, email, password } = parsed.data;
