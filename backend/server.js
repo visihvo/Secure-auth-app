@@ -4,29 +4,28 @@ require("./database");
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
 const cookieParser = require("cookie-parser");
-
 const session = require("express-session");
 const { RedisStore } = require("connect-redis");
-const { createClient } = require("redis");;
-
-const crypto = require("crypto");
+const { createClient } = require("redis");
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const csrfRoutes = require("./routes/csrf");
 
 const authenticateAccessToken = require("./middleware/authAccessToken");
-const csrfMiddleware = require("./middleware/csrfMiddleware");
+const { log } = require("./utils/logger");
 
 const app = express();
-const PORT = 5000; // Hide this?
+
+// Server port
+const PORT = process.env.PORT;
 
 // Used for testing
 const isTest = process.env.NODE_ENV === "test";
-// Used for debugging logs etc.
-const isDev = process.env.NODE_ENV === ("development");
+const isDev = process.env.NODE_ENV === "development";
 
+// Used to sign session cookies
 const SESSION_SECRET =
     process.env.SESSION_SECRET ||
     (isTest ? "test-secret" : null);
@@ -35,28 +34,52 @@ if (!SESSION_SECRET) {
     throw new Error("Server - SESSION_SECRET is required");
 }
 
+// Allowed frontend origins, used to restrict
+// CORS access by preventing unauthorized origins
 const allowedOrigins = [
     process.env.CLIENT_URL, // Vite dev
     process.env.DOCKER_CLIENT_URL // Docker
 ];
 
+/**
+ * Redis client confinguration
+ * 
+ * - Centralized server side session storage
+ * - Prevents insecure in-memory session storage
+ */
 const redisClient = createClient({
     url: process.env.REDIS_URL || "redis://localhost:6379"
 });
 
+// Redis client runtime error handling
 redisClient.on("error", (err) => {
-    console.error("Redis error:", err);
+    log("Redis error:", err);
 });
 
-// await redisClient.connect();
-
+// Apply helmet security headers
 app.use(helmet());
 
+/**
+ * Configure CORS
+ * 
+ * Security:
+ * - Allows only trusted origins
+ * - Enables credentialed requests securely
+ * - Restricts allowed request methods and headers
+ * - Error handling
+ */
 app.use(cors({ 
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Same site origin is seen as undefined
+        if (!origin ) {
             return callback(null, true);
         }
+
+        // Browswer cross-origin requests have origin
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
         return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
@@ -65,10 +88,22 @@ app.use(cors({
     exposedHeaders: ["Set-Cookie"]
 }));
 
+// Parse coming JSON req bodies
 app.use(express.json());
 
+// Cookies from incoming reqs
 app.use(cookieParser());
 
+/**
+ * Creates secure session middleware configuration
+ * 
+ * Security:
+ * - HTTP-only session cookie
+ * - Secure cookies in production
+ * - sameSite property
+ * - Redis backed persistent sessions
+ * @returns 
+ */
 function createSession() {
     return session({
         store: isTest
@@ -91,44 +126,34 @@ function createSession() {
     });
 }
 
+// Enable session handling middleware
 app.use(createSession());
 
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100
-});
-
+// Development debugging logs
 if (isDev) {
     app.use((req, res, next) => {
-        console.log("method:", req.method);
-        console.log("path:", req.path);
-        console.log("csrf header:", req.headers["x-csrf-token"]);
-        console.log("cookies:", req.headers.cookie);
+        log("method:", req.method);
+        log("path:", req.path);
+        log("csrf header:", req.headers["x-csrf-token"]);
+        log("cookies:", req.headers.cookie);
         next();
     });
 }
 
-// CSRF Token
-app.get("/api/csrf-token", (req, res) => {
-    if (!req.session.csrfToken) {
-        req.session.csrfToken = require("crypto").randomBytes(32).toString("hex");
-    }
-    res.json({ csrfToken: req.session.csrfToken });
-});
+// CSRF token endpoints (handled in routes/csrf.js)
+app.use("/api", csrfRoutes);
 
-app.get("/health", (req, res) => res.send("ok"));
-
-// Public routes - no csrf
-// login, register, refresh, check-user
+// Public authentication routes
+// no access token required (login, register, ...)
 app.use("/api/auth", authRoutes);
 
-// Protected user routes - requires access token 
-// eg. /api/user/profile
+// Protected user routes
+// requires valid access token eg. /api/user/profile
 app.use("/api/user", authenticateAccessToken, userRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
-    console.error(err);
+    log(err);
     res.status(500).json({ error: "Server error" });
 })
 
@@ -140,10 +165,10 @@ async function startServer() {
         }
 
         return app.listen(PORT, () => {
-            console.log(`Server running!`);
+            log(`Server running!`);
         });
     } catch (error) {
-        console.error("Failed to start server:", error);
+        log("Failed to start server:", error);
         process.exit(1);
     }
 }
