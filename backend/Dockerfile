@@ -1,4 +1,4 @@
-FROM node:20-slim
+FROM node:26.1.0-slim
 
 WORKDIR /app
 ENV npm_config_build_from_source=sqlite3
