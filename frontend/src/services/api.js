@@ -143,11 +143,11 @@ API.interceptors.response.use(
                 setAccessToken(null);
                 store.dispatch(logout());
 
-                return Promise.reject(refreshError);
+                throw refreshError;
             }
         }
 
-        return Promise.reject(err);
+        throw err;
     }
 );
 
