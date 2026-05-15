@@ -1,33 +1,23 @@
-import { useState, useEffect } from "react";
-import { registerUser, checkUserAvailability } from "../services/authService";
 import { useNavigate, Link } from "react-router-dom";
-import * as Yup from "yup";
 import { useFormik } from "formik";
+
+import { registerUser, checkUserAvailability } from "../services/authService";
+import { registerSchema } from "../utils/registerSchema";
 import { log } from "../utils/logger";
 
-const registerSchema = Yup.object({
-    username: Yup.string()
-    .min(3)
-    .max(40)
-    .matches(/^[a-zA-Z0-9_]+$/, "Only letters, numbers, underscores")
-    .required(),
-
-    email: Yup.string()
-        .email("Invalid email format")
-        .required(),
-
-    password: Yup.string()
-        .min(12, "Minimum 12 characters")
-        .matches(/[A-Z]/, "Must include uppercase")
-        .matches(/[a-z]/, "Must include lowercase")
-        .matches(/[0-9]/, "Must include number")
-        .matches(/[^A-Za-z0-9]/, "Must include special character")
-        .required(),
-
-    password2: Yup.string()
-        .oneOf([Yup.ref("password")], "Passwords must match")
-});
-
+/**
+ * RegisterPage component
+ * 
+ * Handles user registration form UI and user 
+ * registration calls
+ * 
+ * Security:
+ * - Performs client side input validation (Formik + Yup)
+ * - Checks username/email availability before submission
+ * - Secure rules for user inputs
+ * - Sends registration request to backend
+ * - (Backend sanitizes and uses parametrized query)
+ */
 function RegisterPage() {
     const navigate = useNavigate();
 
@@ -39,16 +29,27 @@ function RegisterPage() {
             password2: ""
         },
 
+        // Validation rules in utils/registerSchema.js
         validationSchema: registerSchema,
 
+        /**
+         * Flow:
+         * 1. Normalize input (trim + lowercase)
+         * 2. Check username/email availability
+         * 3. Send registration request
+         * 4a. Succesful registration -> redirects to login
+         * 4b. Registration fail -> Generic error
+         */
         onSubmit: async (values, { setErrors, setSubmitting }) => {
             try {
                 const username = values.username.trim().toLowerCase();
                 const email = values.email.trim().toLowerCase();
 
+                // Availability pre-check
                 const res = await checkUserAvailability(username, email);
                 log(res);
 
+                // Username or email already taken
                 if (res.usernameExists || res.emailExists) {
                     setErrors({
                         general : "Username or email already in use"
@@ -56,6 +57,7 @@ function RegisterPage() {
                     return;
                 }
 
+                // Send final registration
                 await registerUser(
                     {
                     username,

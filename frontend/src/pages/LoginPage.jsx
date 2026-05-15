@@ -7,6 +7,31 @@ import { setUser } from "../redux/authSlice";
 import { setAccessToken } from "../services/api";
 import { log } from "../utils/logger";
 
+/**
+ * LoginPage component
+ * 
+ * Handles user authentication via username/login.
+ * Communicates with backend authentication API and
+ * stores resulting access token for authenticated
+ * requsts.
+ * 
+ * Security:
+ * - Credentials are sent safely over HTTPS via API
+ * - Access token is stored in memory
+ * - Backend enforces authentication and rate limiting
+ * - Generic error messages dont leak sensitive data
+ * - Refresh token handled via HTTP-only cookie
+ * - Access token used for Authorization headers
+ * 
+ * Flow:
+ * 1. User enters username and password
+ * 2. Credentials are sent to backend via loginUser()
+ * 3. Backend validates and returns access token + username
+ * 4. Access token is stored for API requests
+ * 5. Redux state is updated with authenticated user
+ * 6. User is redirected to protected main page.
+ * @returns Login form UI
+ */
 export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -20,22 +45,22 @@ export default function LoginPage() {
 
         try {
             log("[LOGIN] before request");
-            const data = await loginUser(
-                { username, password }
-            );
+            const data = await loginUser( { username, password } );
             log("[LOGIN] response:", data);
 
+            // Stores access token in memory
             setAccessToken(data.accessToken);
-
-            log("[LOGIN SUCCESS]", data);
+            
+            // Store user info in redux state
             dispatch(setUser({ username: data.username }));
 
-
+            // Redirect to protected main page after succesful login
             navigate("/");
 
         } catch (err) {
             const status = err.response?.status;
 
+            // Error doesn't reveal whether username or password wrong
             if (status === 400) {
                 setError("Invalid credentials");
             } else {
