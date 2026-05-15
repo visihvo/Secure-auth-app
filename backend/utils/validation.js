@@ -1,5 +1,19 @@
 const { z } = require("zod");
 
+/**
+ * Registration data validation schema
+ * 
+ * Security features:
+ * - Enforces strict input validation
+ * - Prevents malformed or dangerous input
+ * - Ensures password complexity requirements
+ * - Reduces risk of injection and insecure credentials
+ * - Provides clear error messages
+ * 
+ * Validation rules are the same than on frontend,
+ * except the email requires atleast 2 chars long
+ * top-level domain (.co)!
+ */
 module.exports = z.object({
     username: z.string()
         .min(3, "Username must be at least 3 characters")
