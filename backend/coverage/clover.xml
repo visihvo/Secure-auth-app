@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1778843806890" clover="3.2.0">
-  <project timestamp="1778843806890" name="All files">
-    <metrics statements="275" coveredstatements="182" conditionals="83" coveredconditionals="27" methods="38" coveredmethods="17" elements="396" coveredelements="226" complexity="0" loc="275" ncloc="275" packages="6" files="13" classes="13"/>
+<coverage generated="1778845754494" clover="3.2.0">
+  <project timestamp="1778845754495" name="All files">
+    <metrics statements="275" coveredstatements="187" conditionals="83" coveredconditionals="28" methods="38" coveredmethods="19" elements="396" coveredelements="234" complexity="0" loc="275" ncloc="275" packages="6" files="13" classes="13"/>
     <package name="backend">
-      <metrics statements="79" coveredstatements="55" conditionals="30" coveredconditionals="12" methods="10" coveredmethods="5"/>
+      <metrics statements="79" coveredstatements="60" conditionals="30" coveredconditionals="13" methods="10" coveredmethods="7"/>
       <file name="database.js" path="C:\ohjelmointi\secprog\secure-auth-app\backend\database.js">
-        <metrics statements="20" coveredstatements="13" conditionals="10" coveredconditionals="4" methods="3" coveredmethods="1"/>
+        <metrics statements="20" coveredstatements="18" conditionals="10" coveredconditionals="5" methods="3" coveredmethods="3"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -13,18 +13,18 @@
         <line num="8" count="1" type="stmt"/>
         <line num="9" count="1" type="stmt"/>
         <line num="12" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="13" count="0" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
         <line num="17" count="1" type="stmt"/>
         <line num="26" count="1" type="stmt"/>
         <line num="27" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="28" count="0" type="stmt"/>
         <line num="30" count="1" type="stmt"/>
         <line num="43" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="44" count="0" type="stmt"/>
-        <line num="56" count="0" type="stmt"/>
-        <line num="65" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="65" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="66" count="0" type="stmt"/>
-        <line num="68" count="0" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
         <line num="74" count="1" type="stmt"/>
       </file>
       <file name="server.js" path="C:\ohjelmointi\secprog\secure-auth-app\backend\server.js">
@@ -322,7 +322,7 @@
       <file name="logger.js" path="C:\ohjelmointi\secprog\secure-auth-app\backend\utils\logger.js">
         <metrics statements="6" coveredstatements="3" conditionals="4" coveredconditionals="1" methods="2" coveredmethods="1"/>
         <line num="1" count="3" type="stmt"/>
-        <line num="15" count="77" type="cond" truecount="1" falsecount="1"/>
+        <line num="15" count="78" type="cond" truecount="1" falsecount="1"/>
         <line num="16" count="0" type="stmt"/>
         <line num="31" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="32" count="0" type="stmt"/>
