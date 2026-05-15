@@ -25,9 +25,9 @@ const isNewDb = !fs.existsSync(dbPath);
  */
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
-        console.error("Database connection failed", err);
+       log("Database connection failed", err);
     } else {
-        console.log(
+        log(
             isNewDb
                 ? "No database found - creating a new one"
                 : "Connected to database"

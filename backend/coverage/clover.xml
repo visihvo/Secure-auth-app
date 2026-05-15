@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1778835074577" clover="3.2.0">
-  <project timestamp="1778835074578" name="All files">
+<coverage generated="1778843806890" clover="3.2.0">
+  <project timestamp="1778843806890" name="All files">
     <metrics statements="275" coveredstatements="182" conditionals="83" coveredconditionals="27" methods="38" coveredmethods="17" elements="396" coveredelements="226" complexity="0" loc="275" ncloc="275" packages="6" files="13" classes="13"/>
     <package name="backend">
       <metrics statements="79" coveredstatements="55" conditionals="30" coveredconditionals="12" methods="10" coveredmethods="5"/>
@@ -322,7 +322,7 @@
       <file name="logger.js" path="C:\ohjelmointi\secprog\secure-auth-app\backend\utils\logger.js">
         <metrics statements="6" coveredstatements="3" conditionals="4" coveredconditionals="1" methods="2" coveredmethods="1"/>
         <line num="1" count="3" type="stmt"/>
-        <line num="15" count="76" type="cond" truecount="1" falsecount="1"/>
+        <line num="15" count="77" type="cond" truecount="1" falsecount="1"/>
         <line num="16" count="0" type="stmt"/>
         <line num="31" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="32" count="0" type="stmt"/>
