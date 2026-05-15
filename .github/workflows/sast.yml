@@ -61,7 +61,8 @@ jobs:
             -t ghcr.io/zaproxy/zaproxy:stable `
             zap-full-scan.py `
             -t http://host.docker.internal:8080 `
-            -r zap-report.html
+            -r zap-report.html `
+            -I
       
       - name: Upload ZAP Report Artifact
         uses: actions/upload-artifact@v4
