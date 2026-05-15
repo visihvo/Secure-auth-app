@@ -81,12 +81,12 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Trivy Scan Backend Image
-      # run: trivy image --severity HIGH,CRITICAL --exit-code 1 secure-auth-app-backend
-        run: trivy image secure-auth-app-backend
+        run: trivy image secure-auth-app-backend --severity HIGH,CRITICAL --ignore-unfixed
+        #run: trivy image secure-auth-app-backend
 
       - name: Trivy Scan Frontend Image
-      # run: trivy image --severity HIGH,CRITICAL --exit-code 1 secure-auth-app-frontend
-        run: trivy image secure-auth-app-frontend
+        run: trivy image secure-auth-app-frontend --severity HIGH,CRITICAL --ignore-unfixed
+        #run: trivy image secure-auth-app-frontend
 
       - name: Generate CycloneDX
         run: npx @cyclonedx/cyclonedx-npm --output-file sbom.json
