@@ -79,7 +79,7 @@ function RegisterPage() {
     return (
         <form id="registration-form" onSubmit={formik.handleSubmit} style={{ display: "flex", flexDirection: "column", gap:"2px"}}>
             <>
-                <label>Username</label>
+                <label htmlFor="username">Username</label>
                 <input
                     name="username"
                     required
@@ -87,8 +87,7 @@ function RegisterPage() {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     
-                    style={{width: "fit-content"}}  
-                    required     
+                    style={{width: "fit-content"}}    
                     placeholder="Username"
                 />
 
@@ -98,16 +97,16 @@ function RegisterPage() {
             </>
             
             <>
-                <label>Email</label>
+                <label htmlFor="email">Email</label>
                 <input 
                     name="email"
                     type="email"
+                    required
                     value={formik.values.email}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
 
                     style={{width: "fit-content"}}
-                    required
                     placeholder="Email"
                 />
                 
@@ -117,8 +116,9 @@ function RegisterPage() {
             </>
 
             <>
-                <label>Password</label>
+                <label htmlFor="password">Password</label>
                 <input
+                    id="password"
                     name="password"
                     type="password"
                     value={formik.values.password}
@@ -136,8 +136,9 @@ function RegisterPage() {
             </>
             
             <>
-                <label>Repeat password</label>
+                <label htmlFor="password2">Repeat password</label>
                 <input 
+                    id="password2"
                     name="password2"
                     type="password"
                     value={formik.values.password2}
