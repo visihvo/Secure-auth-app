@@ -100,7 +100,7 @@ jobs:
       - name: SonarQube Scan
         shell: powershell
         run: |
-          npx sonar-scanner "-Dsonar.projectKey=Secure-web-with-user-authentication" "-Dsonar.sources=backend,frontend" "-Dsonar.exclusions=**/node_modules/**,**/coverage/**,**/dist/**,**/build/**,backend/coverage/**,frontend/coverage/**" "-Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info" "-Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}" "-Dsonar.login=${{ secrets.SONAR_TOKEN }}"
+          npx sonar-scanner "-Dsonar.projectKey=Secure-web-with-user-authentication" "-Dsonar.sources=backend,frontend" "-Dsonar.exclusions=**/node_modules/**,**/coverage/**,**/dist/**,**/build/**,backend/coverage/**,frontend/coverage/**" "-Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info" "-Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}" "-Dsonar.token=${{ secrets.SONAR_TOKEN }}"
 
       - name: Stop containers
         if: always()
