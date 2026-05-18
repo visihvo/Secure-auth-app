@@ -41,6 +41,8 @@ export const setCsrfToken = (token) => {
  */
 export const loadCsrfToken = async () => {
     try {
+        console.log("Loading CSRF");
+        console.log(import.meta.env.MODE);
         log("[CSRF] loading...");
 
         const res = await csrfClient.get("/csrf-token");
@@ -118,17 +120,25 @@ API.interceptors.response.use(
     (res) => res,
     async (err) => {
         log("inter res");
+        console.log("inter res");
+        console.log(err);
         const originalRequest = err.config;
 
         // If 401 = unauthorized, attempt token refresh once
-        if (err.response?.status === 401 && !originalRequest._retry) {
+        if (err.response?.status === 401
+            && !originalRequest._retry
+            && !originalRequest.url.includes("/auth/refresh")
+        ) {
             originalRequest._retry = true;
+            console.log("401");
 
             try {
                 // Attempt refresh
                 const res = await API.post("/auth/refresh");
 
-                const newToken = res.data.accessToken;
+                const newToken = res.data.data.accessToken;
+                console.log("accessToken: ",res.data.data.accessToken)
+                console.log("res.data:"), res.data;
                 setAccessToken(newToken);
 
                 // Retry original request with new token
@@ -139,6 +149,7 @@ API.interceptors.response.use(
 
             } catch (refreshError) {
                 // If refresh fails -> force logout
+                console.log("refresh error");
                 log("[AUTH] refresh failed -> logout");
                 setAccessToken(null);
                 store.dispatch(logout());

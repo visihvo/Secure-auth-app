@@ -121,7 +121,7 @@ exports.login = async (data) => {
     const accessToken = jwt.sign(
         { id: user.id, username: user.username },
         ACCESS_SECRET,
-        { expiresIn: "15m" }
+        { expiresIn: "1m" }
     );
 
     const refreshToken = jwt.sign(
@@ -160,7 +160,7 @@ exports.refresh = async (token) => {
             const accessToken = jwt.sign(
                 { id: user.id, username: user.username },
                 ACCESS_SECRET,
-                { expiresIn: "15m" }
+                { expiresIn: "1m" }
             );
 
             resolve(accessToken);

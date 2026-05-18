@@ -37,7 +37,7 @@ function authenticateAccessToken(req, res, next) {
 
     if (!authHeader) {
         log("AUTH FAIL: Missing Authorization header");
-        return res.status(403).json({ error: "Missing access token" });
+        return res.status(401).json({ error: "Missing access token" });
     }
 
     const token = authHeader?.split(" ")[1];
@@ -62,7 +62,7 @@ function authenticateAccessToken(req, res, next) {
         next();
     } catch (err) {
         log("AUTH FAIL: Invalid token", err.message);
-        return res.status(403).json({ error: "Invalid access token" });
+        return res.status(401).json({ error: "Invalid access token" });
     }
 }
 
